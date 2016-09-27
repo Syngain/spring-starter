@@ -1,0 +1,17 @@
+apply plugin: 'java'
+apply plugin: 'propdeps'
+apply plugin: 'spring-boot'
+apply from: file("$rootDir/hl-util/build.gradle")
+
+jar {
+    manifest.attributes provider: 'gradle'
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile("org.projectlombok:lombok:1.16.10")
+    optional("org.springframework.boot:spring-boot-configuration-processor")
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+

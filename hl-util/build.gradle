@@ -1,0 +1,59 @@
+buildscript {
+    ext {
+        scalaVersion = '2.11.8'
+        scalaLibVersion = '2.11'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'scala'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+description = 'com.hualongdata.util'
+
+// 这里需要重新设置Scala和Java源码的搜索路径，把Java源码路径移动到Scala的搜索路径来。不然编译时会遇到Java代码找不到Scala代码符号问题
+sourceSets {
+    main {
+        scala {
+            srcDirs = ['src/main/scala', 'src/main/java']
+        }
+        java {
+            srcDirs = []
+        }
+    }
+    test {
+        scala {
+            srcDirs = ['src/test/scala', 'src/test/java']
+        }
+        java {
+            srcDirs = []
+        }
+    }
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked" << "-Xlint:-options"
+    dependsOn(processResources)
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.additionalParameters = ["-feature", "-language:implicitConversions", "-language:reflectiveCalls"]
+    configure(scalaCompileOptions.forkOptions) {
+        memoryMaximumSize = '1g'
+//            jvmArgs = ['-XX:MaxPermSize=512m']
+    }
+}
+
+dependencies {
+    compile("org.scala-lang:scala-library:$scalaVersion")
+    compile("org.scala-lang:scala-reflect:$scalaVersion")
+    compile("org.scala-lang.modules:scala-java8-compat_$scalaLibVersion:0.7.0")
+    compile('commons-codec:commons-codec:1.10')
+    compile("org.apache.poi:poi-ooxml:$poiVersion")
+    testCompile("org.scalatest:scalatest_$scalaLibVersion:2.2.6")
+    testCompile('junit:junit:4.12')
+}
+
